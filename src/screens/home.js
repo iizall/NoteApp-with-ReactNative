@@ -1,37 +1,54 @@
 import React from 'react';
-import { FlatList, StyleSheet, View, Text, TextInput } from 'react-native';
+import { FlatList, StyleSheet, View, Text, TextInput, Alert } from 'react-native';
 import CustomButton from '../components/customButton';
 
-const NoteCard = ({ item, setCurrentPage, deleteNote, setSelectedNote }) => (
-  <View style={styles.card}>
-    <Text style={styles.cardTitle}>{item.title}</Text>
-    <Text>{item.desc}</Text>
-    <View style={styles.buttons}>
-      <CustomButton
-        backgroundColor="#FFC300"
-        color="#151D3B"
-        text="Ubah"
-        fontSize={12}
-        width={100}
-        onPress={() => {
-          setSelectedNote(item);
-          setCurrentPage('edit');
-        }}
-      />
-      <CustomButton
-        backgroundColor="#D82148"
-        color="#fff"
-        text="Hapus"
-        fontSize={12}
-        width={100}
-        onPress={() => deleteNote(item.id)}
-      />
+const NoteCard = ({ item, setCurrentPage, deleteNote, setSelectedNote }) => {
+  const handleDelete = (id) => {
+    Alert.alert(
+      'Konfirmasi Hapus',
+      'Apakah Anda yakin ingin menghapus catatan ini?',
+      [
+        { text: 'Tidak', style: 'cancel' },
+        { text: 'Ya', onPress: () => deleteNote(id) },
+      ],
+      { cancelable: true }
+    );
+  };
+
+  return (
+    <View style={styles.card}>
+      <Text style={styles.cardTitle}>{item.title}</Text>
+      <Text>{item.desc}</Text>
+      <View style={styles.buttons}>
+        <CustomButton
+          backgroundColor="#FFC300"
+          color="#151D3B"
+          text="Ubah"
+          fontSize={12}
+          width={100}
+          onPress={() => {
+            setSelectedNote(item);
+            setCurrentPage('edit');
+          }}
+        />
+        <CustomButton
+          backgroundColor="#D82148"
+          color="#fff"
+          text="Hapus"
+          fontSize={12}
+          width={100}
+          onPress={() => handleDelete(item.id)}
+        />
+      </View>
     </View>
-  </View>
-);
+  );
+};
 
 const Home = ({ noteList, setCurrentPage, deleteNote, setSelectedNote, searchQuery, setSearchQuery }) => {
-  const filteredNotes = noteList.filter(note => note.title.toLowerCase().includes(searchQuery.toLowerCase()) || note.desc.toLowerCase().includes(searchQuery.toLowerCase()));
+  const filteredNotes = noteList.filter(note =>
+    note.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    note.desc.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <View style={styles.container}>
